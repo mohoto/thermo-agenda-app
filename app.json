@@ -1,11 +1,12 @@
 {
   "expo": {
-    "name": "thermo",
+    "name": "Thermo",
     "slug": "thermo",
+    "description": "Agenda installation thermostat",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "thermo",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -13,13 +14,16 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "package": "com.captive.thermo",
+      "bundleIdentifier": "com.mohoto72.thermo"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.mohoto72.thermo"
     },
     "web": {
       "bundler": "metro",
@@ -31,6 +35,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "b82de7ff-9e02-4600-a3ec-a965f1e4cf91"
+      }
+    },
+    "owner": "mohoto72"
   }
 }
