@@ -15,15 +15,13 @@
     },
     "ios": {
       "supportsTablet": true,
-      "package": "com.captive.thermo",
       "bundleIdentifier": "com.mohoto72.thermo"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.mohoto72.thermo"
+      }
     },
     "web": {
       "bundler": "metro",
@@ -31,7 +29,8 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
