@@ -3,22 +3,20 @@ import React from 'react'
 import CustomButton from '@/components/CustomButton'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/providers/AuthProvider'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { red } from 'react-native-reanimated/lib/typescript/Colors'
 import { router } from 'expo-router'
+import planningStore from '@/store/planningStore';
 
 type Props = {}
 
 const SignOut = (props: Props) => {
 
+  const removeThechniciens = planningStore((state: any) => state.removeThechniciens);
+  const removeStorage = planningStore((state: any) => state.removeStorage);
+
   //const { user } = useAuth();
 
   const handleLogOut = async () => {
-    try {
-      await AsyncStorage.clear();
-    } catch (error) {
-      console.log(error);
-    }
+    removeStorage();
     await supabase.auth.signOut();
     router.push('/sign-in');
   };

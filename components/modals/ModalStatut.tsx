@@ -5,6 +5,7 @@ import CustomButton from '../CustomButton';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '@/lib/supabase';
 import { Event } from '@/types/EventCalendarTypes';
+import planningStore from '@/store/planningStore';
 
 interface StatutItem {
     value: string;
@@ -37,6 +38,8 @@ type Props = {
 }
 
 const ModalStatut = ({newStatut, setNewStatut, modalStatutVisible, setModalStatutVisible, event, setBgColorStatut}: Props) => {
+
+    const currentUser = planningStore((state: any ) => state.currentUser);  
 
     const [form, setForm] = useState({
         nombre_thermostat: '',
@@ -93,7 +96,39 @@ const ModalStatut = ({newStatut, setNewStatut, modalStatutVisible, setModalStatu
                 >
                     <Ionicons name="close-circle-outline" size={40} color="black" />
                 </TouchableOpacity>
-                <View className="w-full px-8 py-4 gap-y-2">
+                {currentUser?.role === "commercial" ? (
+                  <View className="w-full px-8 py-4 gap-y-2">
+                  <TouchableOpacity
+                  activeOpacity={0.8}
+                  className="w-full justify-center items-center bg-yellow-600 rounded-xl"
+                  onPress={() => handleSumitStatut("Planifié")}
+                  >
+                    <Text className="text-center text-xl font-psemibold py-4 text-white">Planifié</Text>
+                  </TouchableOpacity> 
+                  <TouchableOpacity
+                  activeOpacity={0.8}
+                  className="w-full justify-center items-center bg-violet-600 rounded-xl"
+                  onPress={() => handleSumitStatut("A replanifié")}
+                  >
+                    <Text className="text-center text-xl font-psemibold py-4 text-white">A replanifié</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                  activeOpacity={0.8}
+                  className="w-full justify-center items-center bg-gray-600 rounded-xl"
+                  onPress={() => handleSumitStatut("Incompatible")}
+                  >
+                    <Text className="text-center text-xl font-psemibold py-4 text-white">Incompatible</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                  activeOpacity={0.8}
+                  className="w-full justify-center items-center bg-red-600 rounded-xl"
+                  onPress={() => handleSumitStatut("Annulé")}
+                  >
+                    <Text className="text-center text-xl font-psemibold py-4 text-white">Annulé</Text>
+                  </TouchableOpacity>
+              </View>
+                ) : (
+                  <View className="w-full px-8 py-4 gap-y-2">
                     <TouchableOpacity
                     activeOpacity={0.8}
                     className="w-full justify-center items-center bg-yellow-600 rounded-xl"
@@ -130,6 +165,7 @@ const ModalStatut = ({newStatut, setNewStatut, modalStatutVisible, setModalStatu
                       <Text className="text-center text-xl font-psemibold py-4 text-white">Annulé</Text>
                     </TouchableOpacity>
                 </View>
+                )}
               </View>
             </View>
         </Modal>

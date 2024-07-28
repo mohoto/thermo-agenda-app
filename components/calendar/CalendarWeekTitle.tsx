@@ -1,9 +1,6 @@
 import { View, Text, TouchableOpacity } from 'react-native'
-import React, {useEffect} from 'react'
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import React from 'react'
 import moment from 'moment';
-import { router } from 'expo-router';
 
 
 type Props = {
@@ -12,40 +9,6 @@ type Props = {
 
 const CalendarWeekTitle = ({title}: Props) => {
 
-    const setDateInstallation = async () => {
-    
-        try {
-            const currentDateStored = await AsyncStorage.getItem('date-installation'); 
-            
-            if(currentDateStored) {
-                try {
-                    // Merge the new date as JSON
-                    const newDate = { "date": title}; // Ensure this is an object
-                    //console.log("newDate:", newDate)
-                    await AsyncStorage.mergeItem('date-installation', JSON.stringify(newDate));
-    
-                } catch (error) {
-                    console.log(error)
-                }
-            }
-            else {
-                try {
-                    // Store the date as a JSON object
-                    const initialDate = { "date": title};
-                    await AsyncStorage.setItem('date-installation', JSON.stringify(initialDate));
-    
-                } catch (error) {
-                    console.log(error)
-                }
-            }
-        } catch (error) {
-            console.log("error:", error)
-        }
-    }
-    useEffect(() => {
-        setDateInstallation();
-    }, [])
-    
 
     return (
         <View className="flex flex-row justify-between items-center mt-10">

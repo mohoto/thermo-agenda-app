@@ -2,11 +2,11 @@ import { View, Text, SafeAreaView } from 'react-native'
 import React from 'react'
 import useCalendarMonth from '@/hooks/useCalendarMonth';
 import ControlMonth from '@/components/calendar/ControlMonth';
-import CalendarMonthInstall from '@/components/calendar/CalendarMonthInstall';
+import CalendarMonth from '@/components/calendar/CalendarMonth';
 
 type Props = {}
 
-const Installation = (props: Props) => {
+const RendezVous = (props: Props) => {
 
   const { changeMonth, date } = useCalendarMonth();
   
@@ -14,16 +14,15 @@ const Installation = (props: Props) => {
     <SafeAreaView className="h-full relative">
       <View className="justify-center px-4 items-center">
         <View className="pt-2">
-          <Text className="text-center text-lg font-psemibold">Rendez-vous installés</Text>
+          <Text className="text-center text-lg font-psemibold">Mes rendez-vous</Text>
           <ControlMonth date={date} changeMonth={changeMonth} />
         </View>
       </View>
       <View>
-        <CalendarMonthInstall date={date}/>
+        <CalendarMonth date={date}/>
       </View>
     </SafeAreaView>
   )
 }
 
-export default Installation
-
+export default RendezVous

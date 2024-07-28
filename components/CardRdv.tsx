@@ -34,7 +34,7 @@ type Props = {
   event: Event;
 }
 
-function CardInstalle({ event }: Props) {
+function CardRdv({ event }: Props) {
 
   const setEvent = planningStore((state: any) => state.setEvent);
 
@@ -135,4 +135,4 @@ function CardInstalle({ event }: Props) {
   )
 }
 
-export default CardInstalle
+export default CardRdv

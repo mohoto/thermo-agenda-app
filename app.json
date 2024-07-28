@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Thermo",
+    "name": "Thermo agenda",
     "slug": "thermo",
     "description": "Agenda installation thermostat",
     "version": "1.0.0",
@@ -15,7 +15,11 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.mohoto72.thermo"
+      "bundleIdentifier": "com.mohoto72.thermo",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -43,6 +47,12 @@
         "projectId": "b82de7ff-9e02-4600-a3ec-a965f1e4cf91"
       }
     },
-    "owner": "mohoto72"
+    "owner": "mohoto72",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b82de7ff-9e02-4600-a3ec-a965f1e4cf91"
+    }
   }
 }

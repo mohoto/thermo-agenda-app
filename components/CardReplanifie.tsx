@@ -34,7 +34,7 @@ type Props = {
   event: Event;
 }
 
-function CardInstalle({ event }: Props) {
+function CardReplanifie({ event }: Props) {
 
   const setEvent = planningStore((state: any) => state.setEvent);
 
@@ -97,11 +97,12 @@ function CardInstalle({ event }: Props) {
 
   return (
     <View className="p-6 mb-8 rounded-xl bg-gray-200">
-      <View
+      <TouchableOpacity
         className={`${bgColorStatut} flex-row justify-center mb-4 px-2 py-3 rounded-xl`}
+        onPress={() => setModalStatutVisible(!modalStatutVisible)}
       >
         <Text className={`text-xl font-psemibold text-white`}>{newStatut}</Text>
-      </View>
+      </TouchableOpacity>
       <View className="flex justify-between font-semibold text-lg flex-row">
         <Text className="text-xl font-psemibold">{evenement.code_postal}</Text>
         <Text className="text-xl font-psemibold">{evenement.heure_installation}</Text>
@@ -122,6 +123,12 @@ function CardInstalle({ event }: Props) {
           <Text className="text-lg">Type de radiateur : {evenement.type_chauffage === "Electrique" ? "ELECTRIQUE" : "HYDRO"}</Text>
           <Text className="text-lg">Nombre de radiateur : {evenement.nombre_radiateur}</Text>
         </View>
+        <TouchableOpacity
+          className="flex-row justify-start"
+          onPress={handleEditEvent}
+        >
+          <MaterialIcons name="edit-calendar" size={24} color="black" />
+        </TouchableOpacity>
       </View>
       <ModalStatut
         newStatut={newStatut}
@@ -135,4 +142,4 @@ function CardInstalle({ event }: Props) {
   )
 }
 
-export default CardInstalle
+export default CardReplanifie

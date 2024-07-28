@@ -5,8 +5,8 @@ import { Event } from '@/types/EventCalendarTypes';
 import * as Linking from 'expo-linking';
 import ModalStatut from '@/components/modals/ModalStatut';
 import { MaterialIcons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '@/lib/supabase';
+import planningStore from '@/store/planningStore';
 
 
 interface StatutItem {
@@ -17,7 +17,7 @@ interface StatutItem {
 }
 
 const statutItems: StatutItem[] = [
-  { value: "Planifié", label: "A replanifié", bgColor: "bg-yellow-600", textColor: "text-yellow-600" },
+  { value: "Planifié", label: "A replanifié", bgColor: "bg-yellow-300", textColor: "text-yellow-300" },
   { value: "Installé", label: "Installé", bgColor: "bg-green-600", textColor: "text-green-600" },
   { value: "A replanifié", label: "A replanifié", bgColor: "bg-violet-600", textColor: "text-violet-600" },
   { value: "SAV", label: "SAV", bgColor: "bg-orange-600", textColor: "text-orange-600" },
@@ -37,6 +37,8 @@ type Props = {
 }
 
 function RdvCardDay({ event, index, currentDay }: Props) {
+
+  const setEvent = planningStore((state: any) => state.setEvent);
 
   const [evenement, setEvenement] = useState<Event>(event);
 
@@ -63,21 +65,7 @@ function RdvCardDay({ event, index, currentDay }: Props) {
   };
 
   const handleEditEvent = async () => {
-    try {
-        const currentEvent = await AsyncStorage.getItem('event');
-        if (currentEvent) {
-            await AsyncStorage.mergeItem('event', JSON.stringify(evenement));
-        }
-        else {
-          try {
-            await AsyncStorage.setItem('event', JSON.stringify(evenement));
-          } catch (error) {
-            console.log(error);
-          }
-        }
-    } catch (error) {
-        console.log(error);
-    }
+    setEvent(evenement);
     router.push('/edit-event');
   }
 
@@ -98,7 +86,8 @@ function RdvCardDay({ event, index, currentDay }: Props) {
           schema: 'public', 
           table: 'planning' },
           //(payload: any) => console.log('Change received!', payload.new))
-          (payload: any) => payload.new.date_installation === payload.new.date_installation ? setEvenement(payload.new) : null)
+          //(payload: any) => payload.new.date_installation === payload.new.date_installation ? setEvenement(payload.new) : null)
+          (payload: any) => setEvenement(payload.new))
           .subscribe(); 
 
   return () => {

@@ -18,7 +18,7 @@ const CalendarDay = ({ }: Props) => {
   return (
     <SafeAreaView className="h-full relative">
       <View className="justify-center px-4 items-center">
-        <View className="mb-4">
+        <View className="mb-2">
           <ControlDay currentDay={currentDay} changeDay={changeDay} />
         </View>
       </View>

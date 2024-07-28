@@ -6,23 +6,23 @@ import 'moment/locale/fr';
 moment.locale('fr');
 
 type Props = {
-    changeWeek: (action: 'add' | 'subtr') => void;
-    currentWeek: moment.Moment;
+    changeMonth: (action: 'add' | 'subtr') => void;
+    date: moment.Moment;
 }
 
-const ControlWeek = ({currentWeek, changeWeek}: Props) => {
+const ControlMonth = ({date, changeMonth}: Props) => {
 
 
   return (
     <View className="flex justify-between items-center w-full flex-row">
         <TouchableOpacity  
-        onPress={() => changeWeek('subtr')}
+        onPress={() => changeMonth('subtr')}
         >
             <Entypo name="chevron-small-left" size={42} color="#6b7280" />
         </TouchableOpacity>
-        <Text className={`font-semibold text-xl`}>{currentWeek.format('MMMM YYYY')}</Text>
+        <Text className={`font-semibold text-xl`}>{date.format('MMMM YYYY')}</Text>
         <TouchableOpacity  
-            onPress={() => changeWeek('add')}
+            onPress={() => changeMonth('add')}
         >
             <Entypo name="chevron-small-right" size={42} color="#6b7280" />
         </TouchableOpacity>
@@ -30,4 +30,4 @@ const ControlWeek = ({currentWeek, changeWeek}: Props) => {
   )
 }
 
-export default ControlWeek
+export default ControlMonth

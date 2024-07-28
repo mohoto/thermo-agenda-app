@@ -1,14 +1,11 @@
 import { View, Text, Image, Alert } from 'react-native'
 import React, {useState, useEffect} from 'react'
 import { Tabs, Redirect } from 'expo-router'
-import { TabBarIcon } from '@/components/navigation/TabBarIcon'
-import { Session } from '@supabase/supabase-js'
-import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/providers/AuthProvider'
-import { Entypo } from '@expo/vector-icons';
-import { Feather } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { FontAwesome6 } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 
 type Props = {
@@ -16,7 +13,7 @@ type Props = {
 }
 
 
-const Tabslayout = ({}: Props) => {
+const Profilelayout = ({}: Props) => {
 
     const { session } = useAuth();
 
@@ -39,48 +36,38 @@ if (!session) {
             }}
         >
         <Tabs.Screen 
-            name="calendar-day"
+            name="rdv"
             options={{
-                title: 'Jour',
+                title: 'Mes rendez-vous',
                 headerShown: false,
                 tabBarIcon:({color, focused}) => (
-                    <FontAwesome6 name="calendar-days" size={28} color={color} />
+                    <Entypo name="users" size={28} color={color} />
                 )
             }}
         />
         <Tabs.Screen 
-            name="calendar-week"
+            name="replanifie"
             options={{
-                title: 'Semaine',
+                title: 'A replanifier',
                 headerShown: false,
                 tabBarIcon:({color, focused}) => (
-                    <FontAwesome5 name="calendar" size={28} color={color} />
+                    <FontAwesome5 name="calendar-plus" size={28} color={color} />
                 )
             }}
         />
         <Tabs.Screen 
-            name="sav"
+            name="sign-out"
             options={{
-                title: 'SAV',
+                title: 'Se déconnecter',
                 headerShown: false,
                 tabBarIcon:({color, focused}) => (
-                    <Entypo name="tools" size={28} color={color} />
+                    <FontAwesome name="sign-out" size={28} color={color} />
                 )
             }}
         />
-        <Tabs.Screen 
-            name="installation"
-            options={{
-                title: 'Installation',
-                headerShown: false,
-                tabBarIcon:({color, focused}) => (
-                    <FontAwesome5 name="check-square" size={28} color={color} />
-                )
-            }}
-        /> 
       </Tabs>
     </>
   )
 }
 
-export default Tabslayout
+export default Profilelayout

@@ -2,8 +2,7 @@ import { View, Text, TouchableOpacity, Alert } from 'react-native'
 import React from 'react'
 import moment from 'moment'
 import 'moment/locale/fr';
-import useEventCalendarDay from '@/hooks/useCalendarDay';
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
+import Entypo from '@expo/vector-icons/Entypo';
 moment.locale('fr');
 
 type Props = {
@@ -21,13 +20,13 @@ const ControlDay = ({changeDay, currentDay}: Props) => {
         <TouchableOpacity  
         onPress={() => changeDay('subtr')}
         >
-            <TabBarIcon name="arrow-back-circle-outline" color="#6b7280" size={42}/>
+            <Entypo name="chevron-small-left" size={42} color="#6b7280" />
         </TouchableOpacity>
         <Text className={`${isSameDay && "text-blue-700"} font-semibold text-xl`}>{currentDay.format('DD MMMM YYYY')}</Text>
         <TouchableOpacity  
             onPress={() => changeDay('add')}
         >
-            <TabBarIcon name="arrow-forward-circle-outline" color="#6b7280" size={42}/>
+            <Entypo name="chevron-small-right" size={42} color="#6b7280" />
         </TouchableOpacity>
     </View>
   )

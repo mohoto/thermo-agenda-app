@@ -1,12 +1,11 @@
 import { View, Text, ActivityIndicator, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 import React, {useState, useEffect} from 'react';
-import { Redirect, router } from 'expo-router';
+import { Link, Redirect, router } from 'expo-router';
 import { useAuth } from '@/providers/AuthProvider';
 import { supabase } from '@/lib/supabase';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Utilisateur } from '@/types/EventCalendarTypes';
 import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomButton from '@/components/CustomButton';
 import planningStore from '@/store/planningStore';
 
@@ -15,135 +14,64 @@ import planningStore from '@/store/planningStore';
 const Welcom = () => {
   const { session } = useAuth();
   const user = session?.user;
- // const curentUser = planningStore((state: any) => state.currentUser);
 
-  const [currentUtilisateur, setCurrentUtilisateur] = useState<Utilisateur | null>(null);
-  //console.log("currentUtilisateur", currentUtilisateur)
-  const [techniciens, setTechniciens] = useState<Utilisateur[]>([])
-  //console.log("techniciens", techniciens)
-  const [currentTechnicien, setCurrentTechnicien] = useState<Utilisateur>()
+  const setCurrentUser = planningStore((state: any) => state.setCurrentUser);
+  const setTechniciens = planningStore((state: any) => state.setTechniciens);
+  const currentUser = planningStore((state: any) => state.currentUser);
+  const techniciens = planningStore((state: any) => state.techniciens);
+  const setCurrentTechnicien = planningStore((state: any) => state.setCurrentTechnicien);
+  const technicien = planningStore((state: any) => state.technicien);
+  const removeStorage = planningStore((state: any) => state.removeStorage);
+  
 
-  const [asyncDataTechniciens, setAsyncDataTechniciens] = useState(false);
-  //console.log("asyncDataTechniciens", asyncDataTechniciens)
-  const [asyncDataUtilisateur, setAsyncDataUtilisateur] = useState(false);
-  //console.log("asyncDataUtilisateur", asyncDataUtilisateur)
-
-
-  const getTechniciansInfo = (userId: string, users: Utilisateur[]) => {
-    const user = users.find(user => user.userId === userId);
-    if (!user || !user.techniciens) return [];
-    return user.techniciens.map(technicianId => users.find(user => user.id.toString() === technicianId));
-  }
 
 
   const handlePressTechnician = async (technician: Utilisateur) => {
-    try {
-      const currentTechnicien = await AsyncStorage.getItem('technicien');
-          if(currentTechnicien) {
-            try {
-              const jsonValue = JSON.stringify(technician);
-              await AsyncStorage.mergeItem('technicien', jsonValue);
-  
-            } catch (error) {
-              console.log(error)
-            }
-          }
-          else {
-            try {
-              const jsonValue = JSON.stringify(technician);
-              await AsyncStorage.setItem('technicien', jsonValue);
-  
-            } catch (error) {
-              console.log(error)
-            }
-          }
-    } catch (error) {
-      console.log(error)
-    }
+    setCurrentTechnicien(technician);
     router.push("/calendar-day")
   }
 
-
-
   useEffect(() => {
-    
     const fetchUser = async () => {
-      const {data: utilisateurs, error} = await supabase
-      .from('utilisateurs')
-      .select()
-      if(error) {
+      const { data: utilisateurs, error } = await supabase
+        .from('utilisateurs')
+        .select()
+      if (error) {
         console.log(error)
       }
-      if(utilisateurs) {
-        //setTechniciens(getTechniciansInfo(user?.id, utilisateurs))
-        const currentUser = utilisateurs.find(user => user.userId === session?.user.id);
-        if(currentUser?.techniciens) {
-          setTechniciens(currentUser.techniciens.map((technicienId: number) => utilisateurs.find((utilisateur: any) => utilisateur.id === technicienId)))
-        }
-        setCurrentUtilisateur(utilisateurs?.find((curUser) => curUser.userId === user?.id))
-        
-        try {
-          const currentUser = await AsyncStorage.getItem('utilisateur');
-          if(currentUser) {
-          
-            try {
-               //await AsyncStorage.mergeItem('utilisateur', JSON.stringify(utilisateurs?.find(curUser => curUser.userId === user?.id)))
-               await AsyncStorage.removeItem('utilisateur');
-               await AsyncStorage.setItem('utilisateur', JSON.stringify(utilisateurs?.find(curUser => curUser.userId === user?.id)))
-            } catch (error) {
-              console.log(error)
-            }
-          }
-          else {
-            try {
-              await AsyncStorage.setItem('utilisateur', JSON.stringify(utilisateurs?.find(curUser => curUser.userId === user?.id)));
-              
-            } catch (error) {
-              console.log(error)
-            }
-          }
-        } catch (error) {
-          console
+      if (utilisateurs) {
+          const currentUtilisateur = utilisateurs.find(utilisateur => utilisateur.userId === user?.id);
+          //setCurrentUser(currentUtilisateur)
+        if (currentUtilisateur?.techniciens.length > 0) {
+          setTechniciens(currentUtilisateur.techniciens.map((technicienId: number) => utilisateurs?.find((utilisateur: any) => utilisateur.id === technicienId)))
         }
       }
-    } 
+    }
     fetchUser();
-  }, []) 
+  }, [currentUser]) 
+  
+
+  useEffect(() => {
+
+    const channelUpdate = supabase.channel('utilisateurs')
+      .on('postgres_changes', { 
+          event: 'UPDATE', 
+          schema: 'public', 
+          table: 'utilisateurs' },
+          (payload: any) => console.log('Change received!', payload.new))
+          .subscribe(); 
+
+  return () => {
+    supabase.removeChannel(channelUpdate)
+    
+  }
+}, [supabase, techniciens, setTechniciens]) 
 
   const handleLogOut = async () => {
-    try {
-      await AsyncStorage.clear();
-    } catch (error) {
-      console.log(error);
-    }
+    removeStorage();
     await supabase.auth.signOut();
     router.push('/sign-in');
   };
-
-
-
-
-  const getTechniciens = async () => {
-    try {
-      const thechniciens = await AsyncStorage.getItem('techniciens')
-      const thehnicienParsed =  thechniciens != null ? JSON.parse(thechniciens) : null;
-      setTechniciens(thehnicienParsed)
-      setAsyncDataTechniciens(true);
-      
-    } catch (error) {
-      console.log("Aucun technicien trouvé dans AsyncStorage")
-    }
-  }
-  const getCurrentUtilisateur = async () => {
-    try {
-      const currentUtilisateur = await AsyncStorage.getItem('utilisateur')
-      const currentUtilisateurParsed = currentUtilisateur != null ? JSON.parse(currentUtilisateur) : null;
-      setCurrentUtilisateur(currentUtilisateurParsed)
-      setAsyncDataUtilisateur(true);
-    } catch (error) {
-      console.log("Aucun utilisateur trouvé dans AsyncStorage")
-    }
-  }
 
 
 
@@ -154,7 +82,7 @@ const Welcom = () => {
   return (
     <SafeAreaView className="h-full">
       <View className="w-full h-full mt-12">
-        {techniciens && currentUtilisateur && currentUtilisateur.role === "commercial" ? (
+        {currentUser.role === "commercial" ? (
           <>
             <View>
               <Text className="text-xl font-medium ml-4">Selectionnez un technicien</Text>
@@ -183,7 +111,7 @@ const Welcom = () => {
           <View>
             <TouchableOpacity
                 className="w-full border-b border-gray-300 py-4 px-4 bg-white flex-row items-center justify-between"
-                onPress={() => handlePressTechnician(currentUtilisateur as Utilisateur)}
+                onPress={() => handlePressTechnician(currentUser as Utilisateur)}
                 >
                   <Text className="text-xl font-semibold">Mon planning</Text>
                   <Ionicons name="chevron-forward" size={24} color="black" />
@@ -199,7 +127,7 @@ const Welcom = () => {
           containerStyles="w-full mt-7 bg-secondary"
           textStyles="text-white"
           />
-        </View> */} 
+        </View>  */}
       </View>
     </SafeAreaView>
   );

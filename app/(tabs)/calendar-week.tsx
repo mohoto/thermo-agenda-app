@@ -8,9 +8,9 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/providers/AuthProvider'
 import useEventCalendarWeek from '@/hooks/useCalendarWeek'
 import { sortEventsByTime } from '@/lib/utils';
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import 'moment/locale/fr';
 import CalendarWeekTitle from '@/components/calendar/CalendarWeekTitle'
+import planningStore from '@/store/planningStore'
 moment.locale('fr');
 
 
@@ -47,6 +47,8 @@ type Props = {
 
 const CalendarWeek = (props: Props) => {
 
+  const currentTechnicien = planningStore((state: any) => state.currentTechnicien);
+
   const { currentWeek, setCurrentWeek, changeWeek, date } = useEventCalendarWeek();
 
   const [evenements, setEvenements] = useState<EventsData>([]);
@@ -71,30 +73,24 @@ const CalendarWeek = (props: Props) => {
 
 
   useEffect(() => {
-    const fetchEvents = async () => { 
-        try {
-            const currentTechnicien = await AsyncStorage.getItem('technicien');
-            const currentTechnicienParsed = currentTechnicien!= null ? JSON.parse(currentTechnicien) : null;
-            if(currentTechnicien) {
-              const { data: events, error, status } = await supabase
-                .from('planning')
-                .select()
-                //.eq('date_installation', formatedCurrentDay)
-                .eq('technicien', currentTechnicienParsed?.id);
-                if(error) {
-                Alert.alert(error.message);
-                }
-                if (events) {
-                setEvenements(events);
-                }
-            }
-        } catch (e) {
-        console.log(e);
+    const fetchEvents = async () => {
+      if (currentTechnicien) {
+        const { data: events, error, status } = await supabase
+          .from('planning')
+          .select()
+          //.eq('date_installation', formatedCurrentDay)
+          .eq('technicien', currentTechnicien?.id);
+        if (error) {
+          Alert.alert(error.message);
         }
+        if (events) {
+          setEvenements(events);
+        }
+      }
     };
     fetchEvents();
-// }, [currentWeek]);
-}, []);
+    // }, [currentWeek]);
+  }, []);
 
 
   const daysOfWeek = [];
@@ -142,7 +138,7 @@ const CalendarWeek = (props: Props) => {
           </View>
         )}
         renderSectionHeader={({ section: { title } }) => (
-          <CalendarWeekTitle  title={title}/>
+          <CalendarWeekTitle title={title} />
         )}
         stickySectionHeadersEnabled={false}
         SectionSeparatorComponent={() => <View className="border-b border-gray-600" />}

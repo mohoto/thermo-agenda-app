@@ -3,32 +3,29 @@ import React, {useEffect, useState} from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import FormField from '@/components/FormField'
 import CustomButton from '@/components/CustomButton'
-import { Link } from 'expo-router'
 import { supabase } from '@/lib/supabase'
-import {Picker} from '@react-native-picker/picker';
-import PickerEvent from '@/components/PickerEvent'
-import { useAuth } from '@/providers/AuthProvider'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Utilisateur } from '@/types/EventCalendarTypes'
 import ModalHeures from '@/components/modals/ModalHeures'
 import ModalChauffage from '@/components/modals/ModalChauffage'
 import ModalStatutClient from '@/components/modals/ModalStatutClient'
 import ModalTypeHabitation from '@/components/modals/ModalTypeHabitation'
 import { Event } from '@/types/EventCalendarTypes'
-import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment'
 import ModalDate from '@/components/modals/ModalDate'
+import FormFieldTextarea from '@/components/FormFieldTextarea'
+import planningStore from '@/store/planningStore'
 
 
 
 type Props = {  
 } 
 
-const EditEvent = (prps: Props) => {
+const EditEvent = (props: Props) => {
 
-  const { user } = useAuth();
+  const dateInstallation = planningStore((state: any) => state.dateInstallation);
+  console.log("dateInstallation", dateInstallation)
+  const setDateInstallation = planningStore((state: any) => state.setDateInstallation);
+  const event = planningStore((state: any) => state.event);
 
-  const [event, setEvent] = useState<Event>()
 
   interface FormState {
     nom: string;
@@ -57,13 +54,6 @@ const EditEvent = (prps: Props) => {
 })
 
   const [loading, setLoading] = useState(false)
-
-  const [dateInstallation, setDateInstallation] = useState<Date>();
-
-  const [utilisateur, setUtilisateur] = useState<Utilisateur | null>(null);
-  //console.log("utilisateur", utilisateur)
-  const [technicien, setTechnicien] = useState<Utilisateur | null>(null);
-  //console.log("technicien", technicien)
 
   const [modaHeureVisible, setModaHeureVisible] = useState<boolean>(false);
   const [modalStatutVisible, setModalStatutVisible] = useState<boolean>(false);
@@ -144,8 +134,7 @@ const EditEvent = (prps: Props) => {
         type_chauffage: typeChauffage,
         nombre_radiateur: form.nombre_radiateur,
         commentaires: form.commentaires,
-        commercial: utilisateur?.id,
-        technicien: technicien?.id
+
     }).eq('id', event?.id)
     if (error) {
         Alert.alert("Erreur lors de la modification du rendez-vous")
@@ -155,67 +144,28 @@ const EditEvent = (prps: Props) => {
     }
   }
 
-  const getUtilisateur = async () => {
-    try {
-      const currentUtilisateur = await AsyncStorage.getItem('utilisateur');
-      const currentUtilisateurParsed =  currentUtilisateur!= null ? JSON.parse(currentUtilisateur) : null;
-      setUtilisateur(currentUtilisateurParsed)
-    } catch (error) {
-        console.log(error)
-    }
-  }
-
-  const getTechnicien = async () => {
-    try {
-      const currentTechnicien = await AsyncStorage.getItem('technicien');
-      const currentTechnicienParsed =  currentTechnicien!= null ? JSON.parse(currentTechnicien) : null;
-      setTechnicien(currentTechnicienParsed)
-    } catch (error) {
-        console.log(error)
-    }
-  }
-
-  const getDateInstallation = async () => {
-    try {
-      const currentDateInstallation = await AsyncStorage.getItem('date-installation');
-      const currentDateInstallationParsed =  currentDateInstallation!= null ? JSON.parse(currentDateInstallation) : null;
-      setDateInstallation(new Date(currentDateInstallationParsed.date))
-    } catch (error) {
-        console.log(error)
-    }
-  }
 
   useEffect(() => {
     const getEvent = async () => {
-      try {
-        const jsonValue = await AsyncStorage.getItem('event')
-        const jsonValueParsed = jsonValue != null ? JSON.parse(jsonValue) : null
-        setEvent(jsonValueParsed)
         setForm({
-            nom: jsonValueParsed?.nom,
-            prenom: jsonValueParsed?.prenom,
-            tel: jsonValueParsed?.tel,
-            email: jsonValueParsed?.email,
-            adresse: jsonValueParsed?.adresse,
-            ville: jsonValueParsed?.ville,
-            code_postal: jsonValueParsed?.code_postal,
-            surface_habitable: jsonValueParsed?.surface_habitable,
-            nombre_radiateur: jsonValueParsed?.nombre_radiateur,
-            commentaires: jsonValueParsed?.commentaires
+            nom: event?.nom,
+            prenom: event?.prenom,
+            tel: event?.tel,
+            email: event?.email,
+            adresse: event?.adresse,
+            ville: event?.ville,
+            code_postal: event?.code_postal,
+            surface_habitable: event?.surface_habitable,
+            nombre_radiateur: event?.nombre_radiateur,
+            commentaires: event?.commentaires
         }) 
-        setHeureInstallation(jsonValueParsed?.heure_installation)
-        setStatutClient(jsonValueParsed?.statut_client)
-        setTypeHabitation(jsonValueParsed?.type_habitation)
-        setTypeChauffage(jsonValueParsed?.type_chauffage)
-      } catch(e) {
-        console.log(e)
-      }
+        setHeureInstallation(event?.heure_installation)
+        setStatutClient(event?.statut_client)
+        setTypeHabitation(event?.type_habitation)
+        setTypeChauffage(event?.type_chauffage)
     }
     getEvent();
-    getTechnicien();
-    getUtilisateur();
-    getDateInstallation();
-  }, [])
+  }, [event])
 
 
   const [showPicker, setShowPicker] = useState<boolean>(false)
@@ -248,7 +198,7 @@ const EditEvent = (prps: Props) => {
                         onChange={handleDateChange}
                         />
                     )} */}
-                    <ModalDate dateInstallation={dateInstallation} setDateInstallation={setDateInstallation} showPicker={showPicker} setShowPicker={setShowPicker}/>
+                    <ModalDate dateInstallation={new Date(dateInstallation)} setDateInstallation={setDateInstallation} showPicker={showPicker} setShowPicker={setShowPicker}/>
                 </View>
                 
                 <View className="w-full">
@@ -381,7 +331,7 @@ const EditEvent = (prps: Props) => {
                     placeholder="Nombre de radiateurs"
                     error={errors.nombre_radiateur}
                 />
-                <FormField 
+                <FormFieldTextarea
                     title="Commentaires"
                     value={form.commentaires}
                     handleChangeText={(e: string) => setForm({...form, commentaires: e})}

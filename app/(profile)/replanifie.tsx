@@ -1,16 +1,13 @@
-import { View, Text, Alert, FlatList } from 'react-native'
+import { View, Text, Alert, FlatList, SafeAreaView } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase';
 import { EventsData } from '@/types/EventCalendarTypes';
-import RdvCardDay from '@/components/calendar/RdvCardDay';
-import { router } from 'expo-router';
-import { FontAwesome6 } from '@expo/vector-icons';
 import planningStore from '@/store/planningStore';
-import CardInstalle from '@/components/CardInstalle';
+import CardReplanifie from '@/components/CardReplanifie';
 
 type Props = {}
 
-const Sav = (props: Props) => {
+const Installation = (props: Props) => {
 
   const currentTechnicien = planningStore((state: any) => state.currentTechnicien);
 
@@ -24,7 +21,7 @@ const Sav = (props: Props) => {
           .from('planning')
           .select()
           .eq('technicien', currentTechnicien?.id)
-          .eq('statut', "SAV");
+          .eq('statut', "A replanifié");
 
         if (error) {
           Alert.alert(error.message);
@@ -33,22 +30,28 @@ const Sav = (props: Props) => {
           setEvenements(events);
         }
       }
+
     };
     fetchEvents();
   }, []);
 
   return (
-    <>
-      <FlatList
-        className="px-4 pt-4"
-        data={evenements}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item, index }) => (
-          <CardInstalle event={item} />
-        )}
-      />
-    </>
+    <SafeAreaView className="h-full relative">
+      <View>
+        <Text className="text-lg text-center py-2 font-pmedium">Rendez-vous à replanifier</Text>
+      </View>
+      <View>
+        <FlatList
+          className="px-4 pt-4"
+          data={evenements}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item, index }) => (
+            <CardReplanifie event={item} />
+          )}
+        />
+      </View>
+    </SafeAreaView>
   )
 }
 
-export default Sav
+export default Installation

@@ -40,8 +40,13 @@ export default function RootLayout() {
     <AuthProvider>
       <Stack>
         <Stack.Screen name="index" options={{ 
-          headerShown: false,
+          headerShown: true,
           title: 'Accueil',
+          headerRight: () => (
+            <Link href={'/rdv'}>
+              <FontAwesome6 name="user-large" size={24} color="black" />
+            </Link>
+          ),
         }}
         />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
@@ -61,10 +66,10 @@ export default function RootLayout() {
           ), */
         }}
         />
-        <Stack.Screen name="modal" options={{ presentation: 'modal'}}/>
-        <Stack.Screen name="create-event" options={{ title: "Rendez-vous" }} />
-        <Stack.Screen name="edit-event" options={{ title: "Rendez-vous" }} />
-        <Stack.Screen name="sign-out" options={{ title: "Déconnexion" }} />
+        <Stack.Screen name="(profile)" options={{ title: "Rendez-vous" }} />
+        <Stack.Screen name="create-event" options={{ title: "Nouveau rendez-vous" }} />
+        <Stack.Screen name="edit-event" options={{ title: "Modifier rendez-vous" }} />
+        {/* <Stack.Screen name="sign-out" options={{ title: "Déconnexion" }} /> */}
         {/* <Stack.Screen name="+not-found" /> */}
       </Stack>
     </AuthProvider>
